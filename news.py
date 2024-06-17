@@ -5,12 +5,11 @@ import datetime
 import os
 from PIL import Image, ImageFont, ImageDraw
 from time import time, localtime, strftime
-from ZhNews import news_get
-from HistoryToday import history_get
+from api import news_get, history_get, verse_get
 from zhdate import ZhDate
 
 news_text = news_get()[0]
-verse = news_get()[1]
+verses = verse_get()
 history_text = history_get()
 
 # 字体
@@ -50,8 +49,8 @@ def background():
     draw.rectangle((x, y + r / 2, x + w, y + h - (r / 2)), fill=(234, 98, 40))
 
     # 画线
-    draw.line((50, 440, 1030, 440), (66, 66, 65), width=5)  # 线的起点和终点，线宽
-    draw.line((50, 580, 1030, 580), (189, 192, 200), width=3)
+    draw.line((50, 450, 1030, 450), (66, 66, 65), width=5)  # 线的起点和终点，线宽
+    draw.line((50, 590, 1030, 590), (189, 192, 200), width=3)
 
     draw.line((25, 25, 25, pic_height - 40), (189, 192, 200), width=3)
     draw.line((25, 25, 1055, 25), (189, 192, 200), width=3)
@@ -86,31 +85,31 @@ def draw_text(draw):
 
     # 微语
     # 计算文本所需的宽度和高度
-    text = verse
-    font = ImageFont.truetype(font_path1, 30, encoding="utf-8")
-    text_bbox = draw.textbbox((0, 0), text, font=font)
-    text_width = text_bbox[2] - text_bbox[0]
-    # 计算文本绘制的起始坐标
-    x = (1080 - text_width) // 2
-    # 绘制文本
-    draw.text((x, 280), text, font=font, fill=(255, 255, 255))
+    for index in range(len(verses)):
+        font = ImageFont.truetype(font_path1, 30, encoding="utf-8")
+        text_bbox = draw.textbbox((0, 0), verses[index], font=font)
+        text_width = text_bbox[2] - text_bbox[0]
+        # 计算文本绘制的起始坐标
+        x = (1080 - text_width) // 2
+        # 绘制文本
+        draw.text((x, 290 + index * 35), verses[index], font=font, fill=(255, 255, 255))
 
     font = ImageFont.truetype(font_path2, 30, encoding="utf-8")
-    draw.text((50, 390), 'NEWS', font=font, fill=(220, 99, 98))
+    draw.text((50, 400), 'NEWS', font=font, fill=(220, 99, 98))
 
     font_small = ImageFont.truetype(font_path1, 35)
-    draw.text((50, 470), "农历", font=font_small, fill=(0, 0, 0))
-    draw.text((50, 520), lunar_calendar(), font=font_small, fill=(0, 0, 0))
-    draw.text((910, 470), strftime("%Y年", localtime(time())), font=font_small, fill=(0, 0, 0))
-    draw.text((870, 520), strftime("%m月%d日", localtime(time())), font=font_small, fill=(0, 0, 0))
+    draw.text((50, 480), "农历", font=font_small, fill=(0, 0, 0))
+    draw.text((50, 530), lunar_calendar(), font=font_small, fill=(0, 0, 0))
+    draw.text((910, 480), strftime("%Y年", localtime(time())), font=font_small, fill=(0, 0, 0))
+    draw.text((870, 530), strftime("%m月%d日", localtime(time())), font=font_small, fill=(0, 0, 0))
 
     font = ImageFont.truetype(font_path1, 50, encoding="utf-8")
-    draw.text((320, 485), '每天60秒读懂世界', font=font, fill=(220, 99, 98))
+    draw.text((320, 495), '每天60秒读懂世界', font=font, fill=(220, 99, 98))
 
     font_news = ImageFont.truetype(font_path, 35)
 
     # 历史上的今天部分
-    draw.text((50, 600), history_get(), font=font_news, fill=(0, 0, 0))
+    draw.text((50, 610), history_text, font=font_news, fill=(0, 0, 0))
 
     draw.line((50, 990, 1030, 990), (189, 192, 200), width=3)
 
